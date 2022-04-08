@@ -9,11 +9,11 @@ import glob
 
 # Regex for string pattern matching
 # file_regex = re.compile('.*\.jpg')
-daisy_regex = '[a-z]*dais[a-z]*'
-dandelion_regex = '[A-Za-z]*dandelion[a-z]*'
-rose_regex = '[a-z]*rose[a-z]*'
-sunflower_regex = '[a-z]*sunflower[a-z]*'
-tulip_regex = '[a-z]*tulip[a-z]*'
+daisy_regex = '[a-z| ]*dais[a-z| ]*'
+dandelion_regex = '[a-z| ]*dandelion[a-z| ]*'
+rose_regex = '[a-z| ]*rose[a-z| ]*'
+sunflower_regex = '[a-z| ]*sunflower[a-z| ]*'
+tulip_regex = '[a-z| ]*tulip[a-z| ]*'
 dir_regex = '({})|({})|({})|({})|({})'.format(daisy_regex,dandelion_regex,rose_regex,sunflower_regex,tulip_regex)
 #dir_regex = '(validation)|(test)'
 
