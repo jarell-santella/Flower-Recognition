@@ -1,6 +1,6 @@
 # Flower Recognition Project
 
-Progress:
+## Progress:
 - [ ] Group all images into one dataset
 - [ ] Remove duplicates from dataset
 - [ ] Resize all images to the same dimensions
