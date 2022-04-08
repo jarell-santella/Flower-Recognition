@@ -2,8 +2,9 @@
 
 ## Progress:
 - [ ] Group all images into one dataset
-- [ ] Remove duplicates from dataset
 - [ ] Resize all images to the same dimensions
+- [ ] Remove duplicates from dataset
+- [ ] Scale features
 - [ ] Randomly split the dataset into training, validation, and test data
 - [ ] Create machine learning model
 - [ ] Train maching learning model
