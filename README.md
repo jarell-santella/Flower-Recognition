@@ -1,9 +1,9 @@
 # Flower Recognition Project
 
 ## Progress:
-- [ ] Group all images into one dataset
-- [ ] Resize all images to the same dimensions
+- [x] Extract images from directory
 - [ ] Remove duplicates from dataset
+- [ ] Resize all images to the same dimensions
 - [ ] Scale features
 - [ ] Randomly split the dataset into training, validation, and test data
 - [ ] Create machine learning model
