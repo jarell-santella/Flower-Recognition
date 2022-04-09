@@ -1,11 +1,9 @@
 import numpy as np
 import pandas as pd
 
-import sys
 import os
 import re
-import PIL
-import glob
+from PIL import Image
 
 # Regex for string pattern matching
 image_regex = '.*\.jpg$'
@@ -37,21 +35,33 @@ def get_regex_group(pattern, string):
             return None
     return None
 
-# Get all image paths from the project directory and store them into their respective lists
+# Resizes an image to square with minimal cropping and no stretching/compressing
+def crop_to_square(image, side_length):
+    width, height = image.size
+    if width > height:
+        left = (width-height)/2
+        top = 0
+        right = width - (width-height)/2
+        bottom = height
+        image = image.crop((left, top, right, bottom))
+    elif width < height:
+        left = 0
+        top = (height-width)/2
+        right = width
+        bottom = height - (height-width)/2
+        image = image.crop((left, top, right, bottom))
+    return image.resize((side_length, side_length), Image.ANTIALIAS)
+
+# Get all image paths from the project directory and store them into their respective lists (works for datasets 1-3)
 for root, dirs, files in os.walk('./Datasets/'):
     for file in files:
         if re.search(image_regex, file, re.I):
             n = get_regex_group(dir_regex, root)
-            try:
-                flower_dict.get(n).append(os.path.join(root, file))
-            except:
-                continue
+            if n is not None:
+                image = crop_to_square(Image.open(os.path.join(root, file)), 200)
+                flower_dict.get(n).append(image)
 
-#print(flower_dict.get(1))
-#print(flower_dict.get(None))
-#print(flower_dict.get(5))
-#print(flower_dict.get(6))
 
-#flower_paths = pd.DataFrame.from_dict(flower_dict)
+#flower_paths = pd.DataFrame({k: pd.Series(v).drop_duplicates() for k, v in flower_dict.items()})
 
-#print(flower_paths)
+#print(flower_paths[5])
