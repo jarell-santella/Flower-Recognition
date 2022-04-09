@@ -3,6 +3,7 @@ import pandas as pd
 
 import os
 import re
+
 from PIL import Image
 
 # Regex for string pattern matching
@@ -15,7 +16,8 @@ tulip_regex = '[a-z| ]*tulip[a-z| ]*'
 dir_regex = '({})|({})|({})|({})|({})'.format(daisy_regex,dandelion_regex,rose_regex,sunflower_regex,tulip_regex)
 #dir_regex = '(validation)|(test)'
 
-# Lists where directories will be stored of respective flowers
+# Lists where pixel data of images will be stored of respective flowers
+flower_list = ['daisy', 'dandelion', 'rose', 'sunflower', 'tulip']
 daisy_list, dandelion_list, rose_list, sunflower_list, tulip_list = ([] for i in range(5))
 flower_dict = {1: daisy_list, 2: dandelion_list, 3: rose_list, 4: sunflower_list, 5: tulip_list}
 
@@ -52,16 +54,22 @@ def crop_to_square(image, side_length):
         image = image.crop((left, top, right, bottom))
     return image.resize((side_length, side_length), Image.ANTIALIAS)
 
-# Get all image paths from the project directory and store them into their respective lists (works for datasets 1-3)
+# Convert dictionary of lists to dictionary of pandas series ready to be put into pandas dataframe
+def dictionary_to_series(dict):
+    output_dictionary = {}
+    for key in dict.keys():
+        output_dictionary[flower_list[key-1]] = pd.Series(dict.get(key)).drop_duplicates()
+    return output_dictionary
+
+# Get all image paths from the project directory and store them into their respective lists
 for root, dirs, files in os.walk('./Datasets/'):
     for file in files:
         if re.search(image_regex, file, re.I):
             n = get_regex_group(dir_regex, root)
             if n is not None:
                 image = crop_to_square(Image.open(os.path.join(root, file)), 200)
-                flower_dict.get(n).append(image)
+                flower_dict.get(n).append(np.asarray(image))
 
+flower_data = pd.DataFrame(dictionary_to_series(flower_dict))
 
-#flower_paths = pd.DataFrame({k: pd.Series(v).drop_duplicates() for k, v in flower_dict.items()})
-
-#print(flower_paths[5])
+flower_data.to_pickle('flower_data.pkl')
