@@ -14,6 +14,5 @@
 1. https://www.kaggle.com/datasets/alxmamaev/flowers-recognition
 2. https://www.kaggle.com/datasets/sauravagarwal/flower-classification
 3. https://www.kaggle.com/datasets/l3llff/flowers
-4. https://www.kaggle.com/datasets/spaics/hackathon-blossom-flower-classification
 
 These were not uploaded to GitHub.
