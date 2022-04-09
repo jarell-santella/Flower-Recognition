@@ -8,7 +8,7 @@ import PIL
 import glob
 
 # Regex for string pattern matching
-# file_regex = re.compile('.*\.jpg')
+image_regex = '.*\.jpg$'
 daisy_regex = '[a-z| ]*dais[a-z| ]*'
 dandelion_regex = '[a-z| ]*dandelion[a-z| ]*'
 rose_regex = '[a-z| ]*rose[a-z| ]*'
@@ -18,8 +18,8 @@ dir_regex = '({})|({})|({})|({})|({})'.format(daisy_regex,dandelion_regex,rose_r
 #dir_regex = '(validation)|(test)'
 
 # Lists where directories will be stored of respective flowers
-daisy_dir, dandelion_dir, rose_dir, sunflower_dir, tulip_dir = ([] for i in range(5))
-flower_dict = {1: daisy_dir, 2: dandelion_dir, 3: rose_dir, 4: sunflower_dir, 5: tulip_dir}
+daisy_list, dandelion_list, rose_list, sunflower_list, tulip_list = ([] for i in range(5))
+flower_dict = {1: daisy_list, 2: dandelion_list, 3: rose_list, 4: sunflower_list, 5: tulip_list}
 
 # Partition string into 3 parts by regex
 def partition_by_regex(regex_search, string):
@@ -30,25 +30,16 @@ def partition_by_regex(regex_search, string):
 def get_regex_group(pattern, string):
     n = re.compile(pattern, re.I).groups
     for i in range(n):
-        if re.search(pattern, string, re.I).group(i+1):
-            return i+1
+        try:
+            if re.search(pattern, string, re.I).group(i+1):
+                return i+1
+        except:
+            return None
     return None
 
-#for root, dirs, files in os.walk('./Datasets'):
-#    regex_search = re.search(dir_regex, root, re.I)
-#    print(root)
-#    if regex_search:
-#        root_components = partition_by_regex(regex_search, root)
-#        n = get_regex_group(dir_regex, root_components[1])
-#        flower_dict.get(n).append(os.path.join(root_components[0],root_components[1]))
-#
-#        print(os.path.join(root_components[0],root_components[1]))
-#        print(root_components[1] + str(get_regex_group(dir_regex, root_components[1])))
-
-# Look in entire project directory for folders of the 5 types of flowers
-for root, dirs, files in os.walk('./Datasets'):
-    for dir in dirs:
-        regex_search = re.search(dir_regex, dir, re.I)
-        if regex_search:
-            n = get_regex_group(dir_regex, dir)
-            flower_dict.get(n).append(os.path.join(root,dir))
+# Get all image paths from the project directory and store them into their respective lists
+for root, dirs, files in os.walk('./Datasets/'):
+    for file in files:
+        if re.search(image_regex, file, re.I):
+            n = get_regex_group(dir_regex, root)
+            flower_dict.get(n).append(os.path.join(root, file))
