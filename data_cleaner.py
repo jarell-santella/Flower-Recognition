@@ -42,4 +42,16 @@ for root, dirs, files in os.walk('./Datasets/'):
     for file in files:
         if re.search(image_regex, file, re.I):
             n = get_regex_group(dir_regex, root)
-            flower_dict.get(n).append(os.path.join(root, file))
+            try:
+                flower_dict.get(n).append(os.path.join(root, file))
+            except:
+                continue
+
+#print(flower_dict.get(1))
+#print(flower_dict.get(None))
+#print(flower_dict.get(5))
+#print(flower_dict.get(6))
+
+#flower_paths = pd.DataFrame.from_dict(flower_dict)
+
+#print(flower_paths)
