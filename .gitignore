@@ -1,8 +1,12 @@
-# macOS generated file
+# macOS generated files
 .DS_Store
 
 # Datasets
 Datasets/
 
-# Output cleaned file
+# Output files
+flower_data.csv
 flower_data.pkl
+
+# Python-generated files
+__pycache__/
