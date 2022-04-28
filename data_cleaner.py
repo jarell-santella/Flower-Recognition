@@ -5,6 +5,9 @@ import os
 import re
 
 from PIL import Image
+import imagehash
+
+from itertools import groupby
 
 from regex_functions import get_regex_group
 
@@ -17,10 +20,8 @@ sunflower_regex = '[a-z| ]*sunflower[a-z| ]*'
 tulip_regex = '[a-z| ]*tulip[a-z| ]*'
 dir_regex = '({})|({})|({})|({})|({})'.format(daisy_regex,dandelion_regex,rose_regex,sunflower_regex,tulip_regex)
 
-# Lists where pixel data of images will be stored of respective flowers
-flower_list = ['daisy', 'dandelion', 'rose', 'sunflower', 'tulip']
-daisy_list, dandelion_list, rose_list, sunflower_list, tulip_list = ([] for i in range(5))
-flower_dict = {1: daisy_list, 2: dandelion_list, 3: rose_list, 4: sunflower_list, 5: tulip_list}
+# Dataframe of pixel data of images with labels indicating which type of flower the pixel data is for
+flower_data = pd.DataFrame(columns=['image_data', 'hash', 'label'])
 
 # Resizes an image to square with minimal cropping and no stretching/compressing
 def crop_to_square(image, side_length=100):
@@ -28,35 +29,39 @@ def crop_to_square(image, side_length=100):
     if width > height:
         left = (width-height)/2
         top = 0
-        right = width - (width-height)/2
+        right = width-(width-height)/2
         bottom = height
         image = image.crop((left, top, right, bottom))
     elif width < height:
         left = 0
         top = (height-width)/2
         right = width
-        bottom = height - (height-width)/2
+        bottom = height-(height-width)/2
         image = image.crop((left, top, right, bottom))
     return image.resize((side_length, side_length), Image.ANTIALIAS)
 
-# Convert dictionary of lists to dictionary of pandas series ready to be put into pandas dataframe
-def dictionary_to_series(dict):
-    output_dictionary = {}
-    for key in dict.keys():
-        output_dictionary[flower_list[key-1]] = pd.Series(dict.get(key)).drop_duplicates()
-    return output_dictionary
+def hash_image(image, hashing_function=imagehash.average_hash, hash_size=10):
+    image = crop_to_square(image, hash_size)
+    return hashing_function(image)
 
 def main():
     # Get all image paths from the project directory and store them into their respective lists
+    global flower_data
+
     for root, dirs, files in os.walk('./Datasets/'):
         for file in files:
             if re.search(image_regex, file, re.I):
                 n = get_regex_group(dir_regex, root)
                 if n is not None:
                     image = crop_to_square(Image.open(os.path.join(root, file)), 200)
-                    flower_dict.get(n).append(np.asarray(image))
+                    pixel_data = np.asarray(image)
+                    hash_value = hash_image(image, hash_size=8)
+                    row_data = pd.Series([pixel_data, hash_value, n], index=flower_data.columns)
+                    flower_data = flower_data.append(row_data, ignore_index=True)
 
-    flower_data = pd.DataFrame(dictionary_to_series(flower_dict))
+    flower_data = flower_data.drop_duplicates('hash')
+
+    flower_data.to_csv('flower_data.csv')
     flower_data.to_pickle('flower_data.pkl')
 
 if __name__ == "__main__":

@@ -8,8 +8,8 @@
 - [x] Store image data
 #### Transform
 - [x] Resize all images to the same dimensions
-- [ ] Get image data as arrays of pixel data
-- [ ] Remove duplicates from dataset
+- [x] Get image data as arrays of pixel data
+- [x] Remove duplicates from dataset
 - [ ] Scale features
 - [ ] Randomly split the dataset into training, validation, and test data
 #### Load
