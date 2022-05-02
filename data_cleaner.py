@@ -7,8 +7,6 @@ import re
 from PIL import Image
 import imagehash
 
-from itertools import groupby
-
 from regex_functions import get_regex_group
 
 # Regex for string pattern matching
@@ -21,7 +19,7 @@ tulip_regex = '[a-z| ]*tulip[a-z| ]*'
 dir_regex = '({})|({})|({})|({})|({})'.format(daisy_regex,dandelion_regex,rose_regex,sunflower_regex,tulip_regex)
 
 # Dataframe of pixel data of images with labels indicating which type of flower the pixel data is for
-flower_data = pd.DataFrame(columns=['image_data', 'hash', 'label'])
+flower_data = pd.DataFrame(columns=['data', 'hash', 'label'])
 
 # Resizes an image to square with minimal cropping and no stretching/compressing
 def crop_to_square(image, side_length=100):
@@ -60,8 +58,8 @@ def main():
                     flower_data = flower_data.append(row_data, ignore_index=True)
 
     flower_data = flower_data.drop_duplicates('hash')
+    flower_data = flower_data[['data', 'label']]
 
-    flower_data.to_csv('flower_data.csv')
     flower_data.to_pickle('flower_data.pkl')
 
 if __name__ == "__main__":
