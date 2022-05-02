@@ -16,7 +16,7 @@ dandelion_regex = '[a-z| ]*dandelion[a-z| ]*'
 rose_regex = '[a-z| ]*rose[a-z| ]*'
 sunflower_regex = '[a-z| ]*sunflower[a-z| ]*'
 tulip_regex = '[a-z| ]*tulip[a-z| ]*'
-dir_regex = '({})|({})|({})|({})|({})'.format(daisy_regex,dandelion_regex,rose_regex,sunflower_regex,tulip_regex)
+dir_regex = '({})|({})|({})|({})|({})'.format(daisy_regex, dandelion_regex, rose_regex, sunflower_regex, tulip_regex)
 
 # Dataframe of pixel data of images with labels indicating which type of flower the pixel data is for
 flower_data = pd.DataFrame(columns=['data', 'hash', 'label'])
