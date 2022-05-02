@@ -5,7 +5,6 @@
 Datasets/
 
 # Output files
-flower_data.csv
 flower_data.pkl
 
 # Python-generated files
