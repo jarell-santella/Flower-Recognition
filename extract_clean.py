@@ -9,8 +9,10 @@ import imagehash
 
 from regex_functions import get_regex_group
 
+from difflib import get_close_matches
+
 # Regex for string pattern matching
-image_regex = '.*\.jpg$'
+image_regex = re.compile('.*\.jpg$')
 daisy_regex = '[a-z| ]*dais[a-z| ]*'
 dandelion_regex = '[a-z| ]*dandelion[a-z| ]*'
 rose_regex = '[a-z| ]*rose[a-z| ]*'
@@ -48,16 +50,20 @@ def main():
 
     for root, dirs, files in os.walk('./Datasets/'):
         for file in files:
-            if re.search(image_regex, file, re.I):
-                n = get_regex_group(dir_regex, root)
-                if n is not None:
+            if image_regex.search(file, re.I):
+                label = get_regex_group(dir_regex, root, num=False)
+                try:
+                    label = get_close_matches(label, ['daisy', 'dandelion', 'rose', 'sunflower', 'tulip'], n=1, cutoff=0.4)[0]
+                except:
+                    label = None
+                if label != None:
                     image = crop_to_square(Image.open(os.path.join(root, file)), 200)
                     pixel_data = np.asarray(image)
                     hash_value = hash_image(image, hash_size=8)
-                    row_data = pd.Series([pixel_data, hash_value, n], index=flower_data.columns)
+                    row_data = pd.Series([pixel_data, hash_value, label], index=flower_data.columns)
                     flower_data = flower_data.append(row_data, ignore_index=True)
 
-    flower_data = flower_data.drop_duplicates('hash')
+    flower_data = flower_data.drop_duplicates('hash', ignore_index=True)
     flower_data = flower_data[['data', 'label']]
 
     flower_data.to_pickle('flower_data.pkl')
